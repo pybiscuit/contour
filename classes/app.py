@@ -16,9 +16,8 @@ class App:
         self.player = player([(0,0,0), (640,384), 4, 0])
         self.entities = kwargs
         pg.init()
-        
+        self.font = pg.font.SysFont("Arial", FONT_SIZE)
 
-        self.debug = []
 
 
     def check_event(self):
@@ -44,6 +43,7 @@ class App:
         for key in self.entities.keys():
             self.entities[key].update(events)
 
+        self.dt = self.clock.tick() * 0.001
     
     def draw(self):
         # pygame.draw.ellipse(window, (255, 255, 255), ellipse_rect, 3)  
@@ -89,7 +89,7 @@ class App:
                      pg.draw.ellipse(self.game_area, (187,25,78), rect, 0)
                 elif collide:
                     pg.draw.ellipse(self.game_area, (0+(interval*idx),0+(interval*idx),0), rect, 0)
-                elif not pcollide:
+                elif not pcollide and not collide:
                     pg.draw.ellipse(self.game_area, (255,255,255), rect, 0)
                 else:
                     pg.draw.ellipse(self.game_area, (0+(interval*idx)*(46/255),0+(interval*idx)*(139/255),0+(interval*idx)*(87/255)), rect, 0)
@@ -99,7 +99,7 @@ class App:
                     pg.draw.ellipse(self.game_area, (0+(interval*idx),0+(interval*idx),0), rect, 0)
                 else:
                     pg.draw.ellipse(self.game_area, (255,255,255), rect, 0)
-        
+            
         
         line_end = (
             self.player.shape[1][0] + self.player.x*25,
@@ -110,9 +110,14 @@ class App:
         pg.draw.circle(self.game_area, self.player.shape[0], self.player.shape[1], self.player.shape[2], self.player.shape[3])
         # pg.draw.line(self.game_area, (255,255,255), (self.player.shape[1][0],0), (self.player.shape[1][0], 768), 1)
         # pg.draw.line(self.game_area, (255,255,255), (0,self.player.shape[1][1]), (1280,self.player.shape[1][1]), 1)
+        self.draw_fps()
         pg.display.flip()
 
-
+    def draw_fps(self):
+        fps = f'{self.clock.get_fps():.0f} FPS'
+        self.game_area.blit(self.font.render(
+            fps, (0,0), (0,0,0)), (10,0))
+        
     def run(self):
         while True:
             self.check_event()
