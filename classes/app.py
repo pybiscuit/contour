@@ -11,13 +11,12 @@ class App:
         os.environ['SQL_VIDEO_WINDOW_POS'] = "%d, %d" % (50, 100)
         self.game_area = pg.display.set_mode(WIN_SIZE)
         self.clock = pg.time.Clock()
-        self.map = map_list().gen_rects()
-        self.map.reverse()
+        self.map = map_list()
+        self.map.rects.reverse()
         self.player = player([(0,0,0), (640,384), 4, 0])
         self.entities = kwargs
         pg.init()
         self.font = pg.font.SysFont("Arial", FONT_SIZE)
-
 
 
     def check_event(self):
@@ -50,41 +49,46 @@ class App:
 
         interval = 255//60
         self.game_area.fill((255,255,255))
-        for idx, rect in enumerate(self.map):
-            # get the independant radii (pixel) of the ellipse
-            a = rect.width // 2
-            b = rect.height // 2
+        rect_cache = 0
+        
+        # for idx, rect in enumerate(self.map.rects):
+        #     # get the independant radii (pixel) of the ellipse
+        #     a = rect.width // 2
+        #     b = rect.height // 2
 
-            # scale factor that is the ratio of radii
-            scale_y = a / b
+        #     # scale factor that is the ratio of radii
+        #     scale_y = a / b
 
-            # center (pixel) of the ellipse
-            cpt_x, cpt_y = rect.center
+        #     # center (pixel) of the ellipse
+        #     cpt_x, cpt_y = rect.center
 
-            # check point pixel coordinates
-            test_x, test_y = self.player.shape[1]
+        #     # check point pixel coordinates
+        #     test_x, test_y = self.player.shape[1]
 
-            # vector coods for player vector (origin at ellipse center)
-            # scale factor used normalize ellipse to circle geometry.
-            dx = test_x - cpt_x
-            dy = (test_y - cpt_y) * scale_y
+        #     # vector coods for player vector (origin at ellipse center)
+        #     # scale factor used normalize ellipse to circle geometry.
+        #     dx = test_x - cpt_x
+        #     dy = (test_y - cpt_y) * scale_y
 
-            collide = dx*dx + dy*dy >= a*a
+        #     collide = dx*dx + dy*dy >= a*a
 
-            if idx > 0 and idx < len(self.map) - 1:
-                prev = self.map[idx+1]
 
-                pa = prev.width//2
-                pb = prev.height//2
+        #     if idx > 0 and idx < len(self.map.rects) - 1:
+        #         prev = self.map.rects[idx+1]
 
-                pscale_y = pa/pb
+        #         pa = prev.width//2
+        #         pb = prev.height//2
 
-                cpt_px, cpt_py = prev.center
+        #         pscale_y = pa/pb
 
-                px = test_x - cpt_px
-                py = (test_y - cpt_py) * pscale_y
+        #         cpt_px, cpt_py = prev.center
 
-                pcollide = px*px + py*py <= pa*pa
+        #         px = test_x - cpt_px
+        #         py = (test_y - cpt_py) * pscale_y
+
+        #         pcollide = px*px + py*py <= pa*pa
+
+        
                 if pcollide and collide:
                      pg.draw.ellipse(self.game_area, (187,25,78), rect, 0)
                 elif collide:
